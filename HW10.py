@@ -80,7 +80,6 @@ def q6(df):
     return max(df[hwy_fe] - df[city_fe])
 
 
-
 def q7(df):
     """
     What is the average annual fuel cost (Annual Fuel1 Cost - Conventional
@@ -105,6 +104,34 @@ def q8(df):
     return suv['Annual Fuel1 Cost - Conventional Fuel'].idmin()
 
 
+def q9(df):
+    """
+    Which manufacturer has the most cars with manual transmission?
+    The function must return a string.
+    :param df:
+    :return:
+    """
+
+
+def q10(df):
+    """
+    What is the average annual fuel cost by car division?  The function
+    must return a Pandas series.
+    :param df:
+    :return:
+    """
+
+
+def q11(df):
+    """
+    What criteria would you use to buy a car?  Write a function that returns
+    your perfect car based on your criteria.  This function must return a
+    string representing the perfect carline for you.
+    :param df:
+    :return:
+    """
+
+
 def main():
     df = load_file(r"2019 FE Guide.csv")
     q1(df)
@@ -115,7 +142,9 @@ def main():
     q6(df)
     q7(df)
     # q8(df)
-
+    # q9(df)
+    # q10(df)
+    # q11(df)
 
 
 if __name__ == '__main__':
