@@ -106,7 +106,7 @@ def q8(df):
 
 
 def main():
-    df = load_file(r"C:\Users\Andrew\Desktop\2019 FE Guide.csv")
+    df = load_file(r"2019 FE Guide.csv")
     q1(df)
     q2(df)
     q3(df)
