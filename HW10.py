@@ -2,18 +2,18 @@
 # Name: HW10.py
 # Purpose:
 #
-# Date:
+# Date: 4/30/19
 # ----------------------------------------------------------------------
 """
 
 """
 import pandas as pd
+import numpy as np
 
 
 def load_file(filename):
     # read csv into a DataFrame
     df_cars = pd.read_csv(filename, delimiter=',')
-    # print(df_cars)
     return df_cars
 
 
@@ -50,22 +50,23 @@ def q4(df):
     """
     comb_fe = 'Comb FE (Guide) - Conventional Fuel'
     low_fe_df = df.loc[df[comb_fe].idxmin()]
-    print("(Q4)Lowest Fuel Efficiency: Division=", low_fe_df['Division'],
-          "Carline=", low_fe_df['Carline'])
+    print("(Q4)Lowest Fuel Efficiency: ", low_fe_df['Division'],
+          low_fe_df['Carline'])
     return low_fe_df['Division'], low_fe_df['Carline']
 
 
 def q5(df):
     """
     What is the highest combined FE - Conventional Fuel among all wheel drives.
-    'Drive Desc'.
+    Use'Drive Desc'. The function must return a float.
     """
     comb_fe = 'Comb FE (Guide) - Conventional Fuel'
-    # First narrow down to all wheel drives
+    # First narrow down to comb FE among wheel drives
     all_wheel_df = df.loc[df['Drive Desc'] == 'All Wheel Drive']
     # Next find highest combined FE - Conventional Fuel
-    print("(Q5)Highest FE among wheel drives:", all_wheel_df[comb_fe].idxmax())
-    return all_wheel_df[comb_fe].idxmax()
+    print("(Q5)Highest FE among wheel drives:",
+          max(all_wheel_df[comb_fe]))
+    return max(all_wheel_df[comb_fe])
 
 
 def q6(df):
@@ -75,9 +76,10 @@ def q6(df):
     """
     hwy_fe = 'Hwy FE (Guide) - Conventional Fuel'
     city_fe = 'City FE (Guide) - Conventional Fuel'
+    df['fe_diff'] = df[hwy_fe] - df[city_fe]
     print("(Q6)Highest FE diff between Hwy and City: ",
-          max(df[hwy_fe] - df[city_fe]))
-    return max(df[hwy_fe] - df[city_fe])
+          df.loc[df['fe_diff'].idxmax()]['Carline'])
+    return df.loc[df['fe_diff'].idxmax()]['Carline']
 
 
 def q7(df):
@@ -89,7 +91,7 @@ def q7(df):
     # First narrow down to supercharged cars
     super_df = df.loc[df['Air Aspiration Method Desc'] == 'Supercharged']
     print("(Q7)Average annual FE cost of supercharged cars: ",
-          round(super_df[ann_fe].mean(), 2))
+          super_df[ann_fe].mean())
     return super_df[ann_fe].mean()
 
 
@@ -98,10 +100,12 @@ def q8(df):
     What SUV has the lowest annual fuel cost?   Use "Carline Class Desc" to
     identify SUVs.
     """
-    # First narrow down to SUVs
-    suv = df['Carline Class Desc'].str.contains('SUV')
-    print("q8 : " + suv['Annual Fuel1 Cost - Conventional Fuel'].idmin())
-    return suv['Annual Fuel1 Cost - Conventional Fuel'].idmin()
+    ann_fe = 'Annual Fuel1 Cost - Conventional Fuel'
+    # Narrow down to SUVs
+    suv_df = df[df['Carline Class Desc'].str.contains('SUV', na=False)]
+    print("(Q8)Lowest annual FE cost of SUVs: ",
+          suv_df.loc[suv_df[ann_fe].idxmin()]['Carline'])
+    return suv_df.loc[suv_df[ann_fe].idxmin()]['Carline']
 
 
 def q9(df):
@@ -111,6 +115,11 @@ def q9(df):
     :param df:
     :return:
     """
+    # Narrow down to manual transmission cars
+    tr_df = df.loc[df['Transmission'].str.contains('Manual', na=False)]
+    print("(Q9)Mfr with most manual transmission cars: ",
+          tr_df['Mfr Name'].value_counts().idxmax())
+    return tr_df['Mfr Name'].value_counts().idxmax()
 
 
 def q10(df):
@@ -120,6 +129,10 @@ def q10(df):
     :param df:
     :return:
     """
+    ann_fe = 'Annual Fuel1 Cost - Conventional Fuel'
+    print("(Q10)Average annual fuel cost by car division",
+          df.groupby('Division').agg({ann_fe: np.average}))
+    return df.groupby('Division').agg({ann_fe: np.average})
 
 
 def q11(df):
@@ -132,19 +145,21 @@ def q11(df):
     """
 
 
+def test_outputs(df):
+    assert (q1(df) == 64)
+    assert (q2(df) == 56)
+    assert (q3(df) == 58.0)
+    assert (q4(df) == ('Bugatti', 'Chiron'))
+    assert (q5(df) == 40.0)
+    assert (q6(df) == 'CRUZE')
+    assert (q7(df) == 2515.4545454545455)
+    assert (q8(df) == 'RAV4 HYBRID AWD')
+    assert (q9(df) == 'BMW')
+
+
 def main():
     df = load_file(r"2019 FE Guide.csv")
-    q1(df)
-    q2(df)
-    q3(df)
-    q4(df)
-    q5(df)
-    q6(df)
-    q7(df)
-    # q8(df)
-    # q9(df)
-    # q10(df)
-    # q11(df)
+    test_outputs(df)
 
 
 if __name__ == '__main__':
